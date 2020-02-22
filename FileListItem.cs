@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleSubtitleRenamer
 {
     internal class FileListItem : INotifyPropertyChanged
     {
-        private string fullFilePath;
-
         public FileListItem(string path)
         {
             fullFilePath = path;
@@ -34,9 +27,34 @@ namespace SimpleSubtitleRenamer
             }
         }
 
+        public bool IsPreview
+        {
+            get => isPreview;
+            set
+            {
+                isPreview = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPreview)));
+            }
+        }
+
+        public string PreviewFileName
+        {
+            get => previewFileName;
+            set
+            {
+                previewFileName = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PreviewFileName)));
+            }
+        }
+
+
         public override string ToString()
         {
-            return FileName;
+            return IsPreview ? PreviewFileName : FileName;
         }
+
+        private string fullFilePath;
+        private bool isPreview;
+        private string previewFileName;
     }
 }

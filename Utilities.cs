@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SimpleSubtitleRenamer
@@ -23,7 +20,7 @@ namespace SimpleSubtitleRenamer
         public static void ListItemsMoveUp(ListBox listBox, IBindingList bindingList)
         {
             int minimum = 0;
-            var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>());
+            var selectedIndices = listBox.SelectedIndices.Cast<int>();
             var newSelectedIndices = new List<int>();
             foreach (int index in selectedIndices)
             {
@@ -51,8 +48,7 @@ namespace SimpleSubtitleRenamer
         public static void ListItemsMoveDown(ListBox listBox, IBindingList bindingList)
         {
             int maximum = bindingList.Count - 1;
-            var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>());
-            selectedIndices.Reverse();
+            var selectedIndices = listBox.SelectedIndices.Cast<int>().Reverse();
             var newSelectedIndices = new List<int>();
             foreach (int index in selectedIndices)
             {
@@ -88,9 +84,8 @@ namespace SimpleSubtitleRenamer
             }
         }
 
-        public static List<string> PreviewNewNames(BindingList<FileListItem> subtitles, BindingList<FileListItem> videos, string prepend, string append)
+        public static void SetPreviews(BindingList<FileListItem> subtitles, BindingList<FileListItem> videos, string prepend, string append)
         {
-            var newNames = new List<string>();
             var minCount = subtitles.Count < videos.Count ? subtitles.Count : videos.Count;
             for (int i = 0; i < minCount; i++)
             {
@@ -98,16 +93,14 @@ namespace SimpleSubtitleRenamer
                 var videoPath = videos[i].FullFilePath;
                 var subExt = Path.GetExtension(subPath);
                 var videoName = Path.GetFileNameWithoutExtension(videoPath);
-                videoName = prepend + videoName + append;
-                newNames.Add(videoName + subExt);
+                var newSubName = prepend + videoName + append + subExt;
+                subtitles[i].PreviewFileName = newSubName;
             }
 
             for (int i = minCount; i < subtitles.Count; i++)
             {
-                newNames.Add(subtitles[i].FileName);
+                subtitles[i].PreviewFileName = subtitles[i].FileName;
             }
-
-            return newNames;
         }
     }
 }

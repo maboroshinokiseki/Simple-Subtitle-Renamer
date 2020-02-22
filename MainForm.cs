@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SimpleSubtitleRenamer
@@ -43,13 +37,13 @@ namespace SimpleSubtitleRenamer
 
         private void Button_Rename_Click(object sender, EventArgs e)
         {
-            var newFileNames = Utilities.PreviewNewNames(subtitleFileList, videoFileList, textBox_Prepend.Text, textBox_Append.Text);
-            for (int i = 0; i < subtitleFileList.Count; i++)
+            foreach (var item in subtitleFileList)
             {
-                if (newFileNames[i] != subtitleFileList[i].FileName)
+                if (item.FileName != item.PreviewFileName)
                 {
-                    var newPath = Path.Combine(Path.GetDirectoryName(subtitleFileList[i].FullFilePath), newFileNames[i]);
-                    File.Move(subtitleFileList[i].FullFilePath, newPath);
+                    var newPath = Path.Combine(Path.GetDirectoryName(item.FullFilePath), item.PreviewFileName);
+                    File.Move(item.FullFilePath, newPath);
+                    item.FullFilePath = newPath;
                 }
             }
         }
@@ -105,13 +99,11 @@ namespace SimpleSubtitleRenamer
         private void Button_SubtitleClear_Click(object sender, EventArgs e)
         {
             subtitleFileList.Clear();
-            RefreshPreview();
         }
 
         private void Button_VideoClear_Click(object sender, EventArgs e)
         {
             videoFileList.Clear();
-            RefreshPreview();
         }
 
         private void CheckBox_Preview_CheckedChanged(object sender, EventArgs e)
@@ -131,22 +123,11 @@ namespace SimpleSubtitleRenamer
 
         private void RefreshPreview()
         {
-            if (checkBox_Preview.Checked)
+            Utilities.SetPreviews(subtitleFileList, videoFileList, textBox_Prepend.Text, textBox_Append.Text);
+
+            foreach (var item in subtitleFileList)
             {
-                var selectedIndices = new List<int>(listBox_Subtitles.SelectedIndices.Cast<int>());
-                listBox_Subtitles.DataSource = Utilities.PreviewNewNames(subtitleFileList, videoFileList, textBox_Prepend.Text, textBox_Append.Text);
-                listBox_Subtitles.SelectedIndices.Clear();
-                foreach (var index in selectedIndices)
-                {
-                    if (index < listBox_Subtitles.Items.Count)
-                    {
-                        listBox_Subtitles.SelectedIndices.Add(index);
-                    }
-                }
-            }
-            else
-            {
-                listBox_Subtitles.DataSource = subtitleFileList;
+                item.IsPreview = checkBox_Preview.Checked;
             }
         }
     }
