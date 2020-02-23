@@ -123,11 +123,31 @@ namespace SimpleSubtitleRenamer
 
         private void RefreshPreview()
         {
-            Utilities.SetPreviews(subtitleFileList, videoFileList, textBox_Prepend.Text, textBox_Append.Text);
-
-            foreach (var item in subtitleFileList)
+            if (checkBox_Preview.Checked)
             {
-                item.IsPreview = checkBox_Preview.Checked;
+                var minCount = subtitleFileList.Count < videoFileList.Count ? subtitleFileList.Count : videoFileList.Count;
+                for (int i = 0; i < minCount; i++)
+                {
+                    var subPath = subtitleFileList[i].FullFilePath;
+                    var videoPath = videoFileList[i].FullFilePath;
+                    var subExt = Path.GetExtension(subPath);
+                    var videoName = Path.GetFileNameWithoutExtension(videoPath);
+                    var newSubName = textBox_Prepend.Text + videoName + textBox_Append.Text + subExt;
+                    subtitleFileList[i].PreviewFileName = newSubName;
+                }
+
+                for (int i = minCount; i < subtitleFileList.Count; i++)
+                {
+                    subtitleFileList[i].PreviewFileName = subtitleFileList[i].FileName;
+                }
+            }
+
+            if (subtitleFileList.Count > 1 && subtitleFileList[0].IsPreview != checkBox_Preview.Checked)
+            {
+                foreach (var item in subtitleFileList)
+                {
+                    item.IsPreview = checkBox_Preview.Checked;
+                }
             }
         }
     }

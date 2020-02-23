@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -20,7 +19,7 @@ namespace SimpleSubtitleRenamer
         public static void ListItemsMoveUp(ListBox listBox, IBindingList bindingList)
         {
             int minimum = 0;
-            var selectedIndices = listBox.SelectedIndices.Cast<int>();
+            var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>());
             var newSelectedIndices = new List<int>();
             foreach (int index in selectedIndices)
             {
@@ -48,7 +47,7 @@ namespace SimpleSubtitleRenamer
         public static void ListItemsMoveDown(ListBox listBox, IBindingList bindingList)
         {
             int maximum = bindingList.Count - 1;
-            var selectedIndices = listBox.SelectedIndices.Cast<int>().Reverse();
+            var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>().Reverse());
             var newSelectedIndices = new List<int>();
             foreach (int index in selectedIndices)
             {
@@ -81,25 +80,6 @@ namespace SimpleSubtitleRenamer
             {
                 bindingList.RemoveAt(index - count);
                 count++;
-            }
-        }
-
-        public static void SetPreviews(BindingList<FileListItem> subtitles, BindingList<FileListItem> videos, string prepend, string append)
-        {
-            var minCount = subtitles.Count < videos.Count ? subtitles.Count : videos.Count;
-            for (int i = 0; i < minCount; i++)
-            {
-                var subPath = subtitles[i].FullFilePath;
-                var videoPath = videos[i].FullFilePath;
-                var subExt = Path.GetExtension(subPath);
-                var videoName = Path.GetFileNameWithoutExtension(videoPath);
-                var newSubName = prepend + videoName + append + subExt;
-                subtitles[i].PreviewFileName = newSubName;
-            }
-
-            for (int i = minCount; i < subtitles.Count; i++)
-            {
-                subtitles[i].PreviewFileName = subtitles[i].FileName;
             }
         }
     }
