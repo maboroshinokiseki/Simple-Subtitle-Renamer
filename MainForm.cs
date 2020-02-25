@@ -48,15 +48,11 @@ namespace SimpleSubtitleRenamer
             }
         }
 
-        private void ListBox_Subtitles_DragDrop(object sender, DragEventArgs e)
+        private void ListBox_DragDrop(object sender, DragEventArgs e)
         {
-            Utilities.AddPathsToList(e, subtitleFileList);
-            RefreshPreview();
-        }
-
-        private void ListBox_Videos_DragDrop(object sender, DragEventArgs e)
-        {
-            Utilities.AddPathsToList(e, videoFileList);
+            var listBox = (ListBox)sender;
+            var source = (BindingList<FileListItem>)listBox.DataSource;
+            Utilities.AddPathsToList(e, source);
             RefreshPreview();
         }
 

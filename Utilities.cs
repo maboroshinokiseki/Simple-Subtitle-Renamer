@@ -10,17 +10,20 @@ namespace SimpleSubtitleRenamer
         public static void AddPathsToList(DragEventArgs e, BindingList<FileListItem> bindingList)
         {
             string[] paths = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            bindingList.BeginUpdate();
             foreach (var path in paths)
             {
                 bindingList.Add(new FileListItem(path));
             }
+            bindingList.EndUpdate();
         }
 
-        public static void ListItemsMoveUp(ListBox listBox, IBindingList bindingList)
+        public static void ListItemsMoveUp(ListBox listBox, BindingList<FileListItem> bindingList)
         {
             int minimum = 0;
             var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>());
             var newSelectedIndices = new List<int>();
+            bindingList.BeginUpdate();
             foreach (int index in selectedIndices)
             {
                 var newIndex = index - 1;
@@ -36,6 +39,7 @@ namespace SimpleSubtitleRenamer
                 bindingList.RemoveAt(index);
                 bindingList.Insert(newIndex, temp);
             }
+            bindingList.EndUpdate();
 
             listBox.SelectedIndices.Clear();
             foreach (var index in newSelectedIndices)
@@ -44,11 +48,12 @@ namespace SimpleSubtitleRenamer
             }
         }
 
-        public static void ListItemsMoveDown(ListBox listBox, IBindingList bindingList)
+        public static void ListItemsMoveDown(ListBox listBox, BindingList<FileListItem> bindingList)
         {
             int maximum = bindingList.Count - 1;
             var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>().Reverse());
             var newSelectedIndices = new List<int>();
+            bindingList.BeginUpdate();
             foreach (int index in selectedIndices)
             {
                 var newIndex = index + 1;
@@ -64,6 +69,7 @@ namespace SimpleSubtitleRenamer
                 bindingList.RemoveAt(index);
                 bindingList.Insert(newIndex, temp);
             }
+            bindingList.EndUpdate();
 
             listBox.SelectedIndices.Clear();
             foreach (var index in newSelectedIndices)
@@ -72,15 +78,17 @@ namespace SimpleSubtitleRenamer
             }
         }
 
-        public static void ListItemsDeleteSelected(ListBox listBox, IBindingList bindingList)
+        public static void ListItemsDeleteSelected(ListBox listBox, BindingList<FileListItem> bindingList)
         {
             var selectedIndices = new List<int>(listBox.SelectedIndices.Cast<int>());
             var count = 0;
+            bindingList.BeginUpdate();
             foreach (int index in selectedIndices)
             {
                 bindingList.RemoveAt(index - count);
                 count++;
             }
+            bindingList.EndUpdate();
         }
     }
 }

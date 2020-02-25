@@ -128,7 +128,7 @@
             this.listBox_Videos.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox_Videos.Size = new System.Drawing.Size(390, 454);
             this.listBox_Videos.TabIndex = 0;
-            this.listBox_Videos.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_Videos_DragDrop);
+            this.listBox_Videos.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
             this.listBox_Videos.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
             // 
             // tableLayoutPanel_VideoButtons
@@ -236,7 +236,7 @@
             this.listBox_Subtitles.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBox_Subtitles.Size = new System.Drawing.Size(389, 454);
             this.listBox_Subtitles.TabIndex = 0;
-            this.listBox_Subtitles.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_Subtitles_DragDrop);
+            this.listBox_Subtitles.DragDrop += new System.Windows.Forms.DragEventHandler(this.ListBox_DragDrop);
             this.listBox_Subtitles.DragEnter += new System.Windows.Forms.DragEventHandler(this.ListBox_DragEnter);
             // 
             // tableLayoutPanel_SubtitleButtons
