@@ -13,6 +13,8 @@ namespace SimpleSubtitleRenamer
         public MainForm()
         {
             InitializeComponent();
+            ChangeLanguage(Properties.Settings.Default.Language);
+            Size = Properties.Settings.Default.Size;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -21,6 +23,12 @@ namespace SimpleSubtitleRenamer
             listBox_Videos.DataSource = videoFileList;
             subtitleFileList = new BindingList<FileListItem>();
             listBox_Subtitles.DataSource = subtitleFileList;
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.Size = Size;
+            Properties.Settings.Default.Save();
         }
 
         private void ListBox_DragEnter(object sender, DragEventArgs e)
@@ -32,19 +40,6 @@ namespace SimpleSubtitleRenamer
             else
             {
                 e.Effect = DragDropEffects.None;
-            }
-        }
-
-        private void Button_Rename_Click(object sender, EventArgs e)
-        {
-            foreach (var item in subtitleFileList)
-            {
-                if (item.FileName != item.PreviewFileName)
-                {
-                    var newPath = Path.Combine(Path.GetDirectoryName(item.FullFilePath), item.PreviewFileName);
-                    File.Move(item.FullFilePath, newPath);
-                    item.FullFilePath = newPath;
-                }
             }
         }
 
@@ -100,6 +95,7 @@ namespace SimpleSubtitleRenamer
         private void Button_VideoClear_Click(object sender, EventArgs e)
         {
             videoFileList.Clear();
+            RefreshPreview();
         }
 
         private void CheckBox_Preview_CheckedChanged(object sender, EventArgs e)
@@ -115,6 +111,19 @@ namespace SimpleSubtitleRenamer
         private void TextBox_Append_TextChanged(object sender, EventArgs e)
         {
             RefreshPreview();
+        }
+
+        private void Button_Rename_Click(object sender, EventArgs e)
+        {
+            foreach (var item in subtitleFileList)
+            {
+                if (item.FileName != item.PreviewFileName)
+                {
+                    var newPath = Path.Combine(Path.GetDirectoryName(item.FullFilePath), item.PreviewFileName);
+                    File.Move(item.FullFilePath, newPath);
+                    item.FullFilePath = newPath;
+                }
+            }
         }
 
         private void RefreshPreview()
@@ -145,6 +154,46 @@ namespace SimpleSubtitleRenamer
                     item.IsPreview = checkBox_Preview.Checked;
                 }
             }
+        }
+
+        private void englishToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeLanguage("en");
+        }
+
+        private void simplifiedChineseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeLanguage("chs");
+        }
+
+        private void traditionalChineseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ChangeLanguage("cht");
+        }
+
+        private void ChangeLanguage(string lang)
+        {
+            Properties.Settings.Default.Language = lang;
+            Properties.Settings.Default.Save();
+
+            Localizer.InitLocalizedResource(lang);
+            languageToolStripMenuItem.Text = "Language".Localize();
+            label_Prepend.Text = "Prepend:".Localize();
+            label_Append.Text = "Append:".Localize();
+            button_SubtitleDelete.Text = "Delete".Localize();
+            button_VideoDelete.Text = "Delete".Localize();
+            button_SubtitleClear.Text = "Clear".Localize();
+            button_VideoClear.Text = "Clear".Localize();
+            button_Rename.Text = "Rename".Localize();
+            checkBox_Preview.Text = "Preview".Localize();
+
+            tableLayoutPanel_Prepend.ColumnStyles[0].SizeType = SizeType.AutoSize;
+            tableLayoutPanel_Append.ColumnStyles[0].SizeType = SizeType.AutoSize;
+            var max = Math.Max(label_Prepend.Width, label_Append.Width);
+            tableLayoutPanel_Prepend.ColumnStyles[0].SizeType = SizeType.Absolute;
+            tableLayoutPanel_Prepend.ColumnStyles[0].Width = max + 8;
+            tableLayoutPanel_Append.ColumnStyles[0].SizeType = SizeType.Absolute;
+            tableLayoutPanel_Append.ColumnStyles[0].Width = max + 8;
         }
     }
 }
