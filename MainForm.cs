@@ -47,7 +47,14 @@ namespace SimpleSubtitleRenamer
         {
             var listBox = (ListBox)sender;
             var source = (BindingList<FileListItem>)listBox.DataSource;
-            Utilities.AddPathsToList(e, source);
+            if (listBox == listBox_Subtitles)
+            {
+                Utilities.AddPathsToList(e, source, "ass,ssa,srt,sub,vtt");
+            }
+            else
+            {
+                Utilities.AddPathsToList(e, source, "3gp,avi,mkv,mp4,flv");
+            }
             RefreshPreview();
         }
 
@@ -101,6 +108,15 @@ namespace SimpleSubtitleRenamer
         private void CheckBox_Preview_CheckedChanged(object sender, EventArgs e)
         {
             RefreshPreview();
+
+            subtitleFileList.BeginUpdate();
+
+            foreach (var item in subtitleFileList)
+            {
+                item.IsPreview = checkBox_Preview.Checked;
+            }
+
+            subtitleFileList.EndUpdate();
         }
 
         private void TextBox_Prepend_TextChanged(object sender, EventArgs e)
@@ -120,40 +136,40 @@ namespace SimpleSubtitleRenamer
                 if (item.FileName != item.PreviewFileName)
                 {
                     var newPath = Path.Combine(Path.GetDirectoryName(item.FullFilePath), item.PreviewFileName);
-                    File.Move(item.FullFilePath, newPath);
-                    item.FullFilePath = newPath;
+                    try
+                    {
+                        File.Move(item.FullFilePath, newPath);
+                        item.FullFilePath = newPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error".Localize(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
 
         private void RefreshPreview()
         {
-            if (checkBox_Preview.Checked)
-            {
-                var minCount = subtitleFileList.Count < videoFileList.Count ? subtitleFileList.Count : videoFileList.Count;
-                for (int i = 0; i < minCount; i++)
-                {
-                    var subPath = subtitleFileList[i].FullFilePath;
-                    var videoPath = videoFileList[i].FullFilePath;
-                    var subExt = Path.GetExtension(subPath);
-                    var videoName = Path.GetFileNameWithoutExtension(videoPath);
-                    var newSubName = textBox_Prepend.Text + videoName + textBox_Append.Text + subExt;
-                    subtitleFileList[i].PreviewFileName = newSubName;
-                }
+            subtitleFileList.BeginUpdate();
 
-                for (int i = minCount; i < subtitleFileList.Count; i++)
-                {
-                    subtitleFileList[i].PreviewFileName = subtitleFileList[i].FileName;
-                }
+            var minCount = subtitleFileList.Count < videoFileList.Count ? subtitleFileList.Count : videoFileList.Count;
+            for (int i = 0; i < minCount; i++)
+            {
+                var subPath = subtitleFileList[i].FullFilePath;
+                var videoPath = videoFileList[i].FullFilePath;
+                var subExt = Path.GetExtension(subPath);
+                var videoName = Path.GetFileNameWithoutExtension(videoPath);
+                var newSubName = textBox_Prepend.Text + videoName + textBox_Append.Text + subExt;
+                subtitleFileList[i].PreviewFileName = newSubName;
             }
 
-            if (subtitleFileList.Count > 1 && subtitleFileList[0].IsPreview != checkBox_Preview.Checked)
+            for (int i = minCount; i < subtitleFileList.Count; i++)
             {
-                foreach (var item in subtitleFileList)
-                {
-                    item.IsPreview = checkBox_Preview.Checked;
-                }
+                subtitleFileList[i].PreviewFileName = subtitleFileList[i].FileName;
             }
+
+            subtitleFileList.EndUpdate();
         }
 
         private void englishToolStripMenuItem_Click(object sender, EventArgs e)

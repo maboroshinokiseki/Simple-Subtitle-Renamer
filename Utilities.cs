@@ -2,18 +2,34 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 
 namespace SimpleSubtitleRenamer
 {
     class Utilities
     {
-        public static void AddPathsToList(DragEventArgs e, BindingList<FileListItem> bindingList)
+        public static void AddPathsToList(DragEventArgs e, BindingList<FileListItem> bindingList, string formatsString)
         {
             string[] paths = (string[])e.Data.GetData(DataFormats.FileDrop, false);
             bindingList.BeginUpdate();
+            var formats = formatsString.Split(',');
             foreach (var path in paths)
             {
-                bindingList.Add(new FileListItem(path));
+                if ((File.GetAttributes(path) & FileAttributes.Directory) != 0)
+                {
+                    var files = Directory.EnumerateFiles(path)
+                        .Where(f => formats.Any(format => f.ToLower().EndsWith(format)))
+                        .ToList();
+
+                    foreach (var file in files)
+                    {
+                        bindingList.Add(new FileListItem(file));
+                    }
+                }
+                else
+                {
+                    bindingList.Add(new FileListItem(path));
+                }
             }
             bindingList.EndUpdate();
         }

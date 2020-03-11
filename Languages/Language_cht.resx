@@ -126,6 +126,9 @@
   <data name="Delete" xml:space="preserve">
     <value>刪除</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>語言</value>
   </data>

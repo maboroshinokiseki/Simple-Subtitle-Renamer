@@ -88,6 +88,15 @@ namespace SimpleSubtitleRenamer.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 错误.
+        /// </summary>
+        internal static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 语言.
         /// </summary>
         internal static string Language {
