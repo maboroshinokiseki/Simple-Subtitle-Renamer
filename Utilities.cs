@@ -18,20 +18,27 @@ namespace SimpleSubtitleRenamer
                 if ((File.GetAttributes(path) & FileAttributes.Directory) != 0)
                 {
                     var files = Directory.EnumerateFiles(path)
-                        .Where(f => formats.Any(format => f.ToLower().EndsWith(format)))
-                        .ToList();
+                        .Where(file => formats.Any(format => file.ToLower().EndsWith(format)));
 
                     foreach (var file in files)
                     {
-                        bindingList.Add(new FileListItem(file));
+                        AddPathIfNotExists(bindingList, file);
                     }
                 }
                 else
                 {
-                    bindingList.Add(new FileListItem(path));
+                    AddPathIfNotExists(bindingList, path);
                 }
             }
             bindingList.EndUpdate();
+        }
+
+        private static void AddPathIfNotExists(BindingList<FileListItem> bindingList, string path)
+        {
+            if (!bindingList.Any(item => item.FullFilePath == path))
+            {
+                bindingList.Add(new FileListItem(path));
+            }
         }
 
         public static void ListItemsMoveUp(ListBox listBox, BindingList<FileListItem> bindingList)
